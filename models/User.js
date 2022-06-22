@@ -64,7 +64,7 @@ userSchema.methods.comparePassword = function(plainPassword, cb) {
     //plainPassword = 123 / 암호화된 비밀번호 $2b$10$zh6g.C7EpAZdEiXHk7y8DuVkq77KMollXHZVl5M2lZEWNYDXCJuUy
     //plainPassword를 암호화해서 비교
     bcrypt.compare(plainPassword, this.password, function(err, isMatch) {
-        if(err) return cb(err)
+        if (err) return cb(err)
         cb(null, isMatch)
     })
 }
@@ -77,7 +77,7 @@ userSchema.methods.generateToken = function(cb) {
     //user._id + 'secretToken' = token -> 'secretToken' -> user._id
     user.token = token
     user.save(function(err, user) {
-        if(err) return cb(err)
+        if (err) return cb(err)
         cb(null, user)
     })
 }
