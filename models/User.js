@@ -25,7 +25,7 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: Number,
-        default: 0
+        default: 0 // 1 어드민, 2 특정부서 어드민, 0 일반유저 / 0이 아니면 관리자
     },
     image: String,
     token: {
@@ -74,12 +74,28 @@ userSchema.methods.generateToken = function(cb) {
     //https://www.npmjs.com/package/jsonwebtoken
     //jsonwebtoken을 이용해서 token을 생성하기
     var token = jwt.sign(user._id.toHexString(), 'secretToken');
+    //user._id + 'secretToken' = token -> 'secretToken' -> user._id
     user.token = token
     user.save(function(err, user) {
         if(err) return cb(err)
         cb(null, user)
     })
 }
+
+userSchema.statics.findByToken = function(token, cb) {
+    var user = this;
+
+    //토큰을 decode 한다.
+    jwt.verify(token, 'secretToken', function(err, decoded) {
+        //유저 아이디를 이용해서 유저를 찾은 다음에 클라이언트에서 가져온 token과 DB에 보관된 token이 일치하는지 확인
+        //findOne은 몽고DB에 있는 메소드
+        user.findOne({"_id": decoded, "token": token}, function(err, user) {
+            if (err) return cb(err);
+            cb(null, user)
+        })
+    })
+}
+
 
 const User = mongoose.model('User', userSchema);
 
