@@ -47,7 +47,8 @@ app.post('/api/users/register', (req, res) => {
 })
 
 app.post('/api/users/login', (req, res) => {
-  //요청된 이메일을 데이터베이스에서 있느지 찾는다.
+  //요청된 이메일을 데이터베이스에서 있는지 찾는다.
+  //findOne - 몽고DB에서 제공하는 메소드
   User.findOne({email: req.body.email}, (err, user) => {
     if (!user) {
       return res.json({

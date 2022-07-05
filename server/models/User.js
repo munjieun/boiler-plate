@@ -62,10 +62,10 @@ userSchema.pre('save', function(next){
 userSchema.methods.comparePassword = function(plainPassword, cb) {
     //cb 콜백
     //plainPassword = 123 / 암호화된 비밀번호 $2b$10$zh6g.C7EpAZdEiXHk7y8DuVkq77KMollXHZVl5M2lZEWNYDXCJuUy
-    //plainPassword를 암호화해서 비교
+    //plainPassword를 암호화해서 비교, DB에 저장된 비밀번호를 복호화 할 수는 없다.
     bcrypt.compare(plainPassword, this.password, function(err, isMatch) {
         if (err) return cb(err)
-        cb(null, isMatch)
+        cb(null, isMatch)//에러는 없고(null), isMatch의 값 전달
     })
 }
 
@@ -73,6 +73,7 @@ userSchema.methods.generateToken = function(cb) {
     var user = this;
     //https://www.npmjs.com/package/jsonwebtoken
     //jsonwebtoken을 이용해서 token을 생성하기
+    console.log(user._id.toHexString());
     var token = jwt.sign(user._id.toHexString(), 'secretToken');
     //user._id + 'secretToken' = token -> 'secretToken' -> user._id
     user.token = token
